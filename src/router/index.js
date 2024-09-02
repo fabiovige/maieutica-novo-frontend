@@ -1,3 +1,4 @@
+import Login from "@/components/UserLogin.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 
@@ -6,21 +7,45 @@ const routes = [
     path: "/",
     name: "home",
     component: HomeView,
+    meta: { requiresAuth: true },
   },
   {
     path: "/about",
     name: "about",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: Login,
   },
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem("token");
+
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    // Se a rota requer autenticação e o token não está presente, redireciona para login
+    if (!token) {
+      next({ name: "login" });
+    } else {
+      next();
+    }
+  } else {
+    // Se a rota não requer autenticação e o usuário já está logado, redireciona para home
+    if (to.name === "login" && token) {
+      next({ name: "home" });
+    } else {
+      next();
+    }
+  }
 });
 
 export default router;

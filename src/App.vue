@@ -2,17 +2,31 @@
   <nav>
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link> |
-    <a href="#" @click.prevent="logout">Sair</a>
+    <a href="#" @click.prevent="handlerLogout">Sair</a>
   </nav>
   <router-view />
 </template>
 
 <script>
 import apiClient from "@/services/axios.js";
+import { mapActions } from "vuex";
 
 export default {
   methods: {
-    async logout() {
+    ...mapActions("user", ["logout"]),
+    async handlerLogout() {
+      try {
+        await this.logout();
+        this.$router.push({ name: "login" });
+      } catch (error) {
+        console.error(
+          "Erro ao fazer logout:",
+          error.response ? error.response.data : error.message
+        );
+      }
+    },
+
+    async logout2() {
       try {
         console.log("logout...");
         // Recupera o ID do usuário logado do localStorage

@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1>Login</h1>
-    <form @submit.prevent="login">
+    <form @submit.prevent="handleLogin">
       <input v-model="email" type="email" placeholder="Email" required />
       <input v-model="password" type="password" placeholder="Senha" required />
       <button type="submit">Entrar</button>
@@ -11,28 +11,23 @@
 </template>
 
 <script>
-import apiClient from "@/services/axios.js";
+import { mapActions } from "vuex";
 
 export default {
   name: "UserLogin",
   data() {
     return {
-      email: "",
-      password: "",
+      email: "eduardo@gmail.com",
+      password: "secret123",
       message: "",
     };
   },
   methods: {
-    async login() {
+    ...mapActions("user", ["login"]),
+    async handleLogin() {
       try {
-        const response = await apiClient.post("/login", {
-          email: this.email,
-          password: this.password,
-        });
-        localStorage.setItem("token", response.data.access_token);
-        localStorage.setItem("user_id", response.data.user.id);
-        localStorage.setItem("name", response.data.user.name);
-        localStorage.setItem("email", response.data.user.email);
+        console.log("teste");
+        await this.login({ email: this.email, password: this.password });
         this.$router.push({ name: "home" });
       } catch (error) {
         this.message = error.response ? error.response.data : error.message;

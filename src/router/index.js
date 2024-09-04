@@ -1,4 +1,5 @@
 import Login from "@/components/UserLogin.vue";
+import UserList from "@/components/users/UserList.vue";
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "../views/HomeView.vue";
 
@@ -20,6 +21,12 @@ const routes = [
     path: "/login",
     name: "login",
     component: Login,
+  },
+
+  {
+    path: "/users",
+    name: "users",
+    component: UserList,
   },
 ];
 

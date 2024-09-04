@@ -1,5 +1,6 @@
 import apiClient from "@/services/axios";
 
+// armazenamento dos dados
 const state = {
   token: localStorage.getItem("token") || "",
   user: {
@@ -7,12 +8,22 @@ const state = {
     name: localStorage.getItem("name") || "",
     email: localStorage.getItem("email") || "",
   },
+  users: {
+    data: [], // Inicializando a lista de usuários vazia
+    current_page: 1,
+    last_page: 1,
+    total: 0,
+    links: [],
+  },
 };
 
+// devolve os dados para componentes externo
 const getters = {
   isAuthenticated: (state) => !!state.token,
   getUser: (state) => state.user,
   getToken: (state) => state.token,
+  getUsers: (state) => state.users.data || [],
+  getPagination: (state) => state.users || {},
 };
 
 const mutations = {
@@ -33,6 +44,9 @@ const mutations = {
     localStorage.removeItem("user_id");
     localStorage.removeItem("name");
     localStorage.removeItem("email");
+  },
+  SET_USERS(state, users) {
+    state.users = users; // Mutação para definir os usuários no estado
   },
 };
 
@@ -72,6 +86,26 @@ const actions = {
     } catch (error) {
       console.error(
         "Erro ao fazer logout:",
+        error.response ? error.response.data : error.message
+      );
+    }
+  },
+
+  /** LISTAR USUÁRIOS **/
+  async fetchUsers({ commit }, page = 1) {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await apiClient.get(`/users?page=${page}`, {
+        headers: {
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`, // Enviando o token no cabeçalho Authorization
+        },
+      });
+      commit("SET_USERS", response.data); // Armazenar usuários no estado
+    } catch (error) {
+      console.error(
+        "Erro ao buscar usuários:",
         error.response ? error.response.data : error.message
       );
     }

@@ -18,13 +18,19 @@ export default {
     ...mapActions("user", ["logout"]),
     async handlerLogout() {
       try {
+        const token = localStorage.getItem("token");
+        console.log(token);
+        if (!token) {
+          console.error("Token não encontrado, redirecionando para o login...");
+          this.$router.push({ name: "login" });
+          return;
+        }
+
         await this.logout();
         this.$router.push({ name: "login" });
       } catch (error) {
-        console.error(
-          "Erro ao fazer logout:",
-          error.response ? error.response.data : error.message
-        );
+        console.log(error.response.data);
+        console.log(error.message);
       }
     },
   },

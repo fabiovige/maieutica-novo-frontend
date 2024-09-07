@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import { useToast } from "vue-toastification";
 import { mapActions } from "vuex";
 
 export default {
@@ -25,12 +26,19 @@ export default {
   methods: {
     ...mapActions("user", ["login"]),
     async handleLogin() {
+      const toast = useToast();
       try {
-        console.log("teste");
         await this.login({ email: this.email, password: this.password });
         this.$router.push({ name: "home" });
       } catch (error) {
-        this.message = error.response ? error.response.data : error.message;
+        const message = error.response
+          ? error.response.data.message
+          : "Erro ao realizar login";
+        toast.success(`${message}`, {
+          timeout: 5000,
+          closeOnClick: true,
+          pauseOnHover: true,
+        });
       }
     },
   },

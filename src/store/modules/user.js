@@ -75,7 +75,14 @@ const actions = {
         return;
       }
 
-      const response = await apiClient.post(`/logout/${userId}`);
+      const token = localStorage.getItem("token");
+      const response = await apiClient.post(`/logout/${userId}`, {
+        headers: {
+          Accept: "application/json",
+          "Content-type": "application/json",
+          Authorization: `Bearer ${token}`, // Enviando o token no cabeçalho Authorization
+        },
+      });
 
       if (response.data.status) {
         console.log(response.data.message);
@@ -95,7 +102,6 @@ const actions = {
   async fetchUsers({ commit }, page = 1) {
     try {
       const token = localStorage.getItem("token");
-
       const response = await apiClient.get(`/users?page=${page}`, {
         headers: {
           "Content-type": "application/json",

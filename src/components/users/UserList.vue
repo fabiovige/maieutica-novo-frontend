@@ -1,7 +1,7 @@
 <template>
   <div class="row">
     <div class="col-12">
-      <h2 class="mb-3">Lista de Usuários</h2>
+      <h2 class="mb-3">Gerenciamento de Usuários</h2>
       <table
         class="table table-striped table-bordered table-hover table-responsive"
       >
@@ -81,7 +81,6 @@ export default {
     },
   },
   created() {
-    console.log("created");
     this.fetchUsers(); // Chamar a ação para buscar os usuários ao montar o componente
   },
 };
